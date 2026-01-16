@@ -1,10 +1,10 @@
-# BubbleRAN Network Blueprints
+# BubbleRAN Telco Blueprints
 
-This repository contains a collection of network blueprints for deploying various 5G networks in [BubbleRAN](https://bubbleran.com/) platforms.
+This repository contains a collection of telco blueprints for deploying various 5G networks in [BubbleRAN](https://bubbleran.com/) platforms.
 
 ## Repository Structure
 
-The blueprints are organized by vendor and hardware to make them easy to find and use:
+The network blueprints are organized by vendor and hardware to make them easy to find and use:
 
 ```
 network/
