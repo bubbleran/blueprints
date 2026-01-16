@@ -1,0 +1,99 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: liteon
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: 12.1.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        -   name: oai-gnb-1
+            stack: 5g-sa
+            model: oai-ran/monolithic-gnb-ru #cu-du-ru
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: oran-7.2
+                antenna:
+                    formation: 4x4
+            scheduling:
+                nodeName: bubble2
+            annotations:
+                extras.t9s.io/pci-ids: '["0000:01:11.0", "0000:01:11.1"]' 
+                extras.t9s.io/du-macs: '["02:11:22:33:44:66", "02:11:22:33:44:67"]' 
+                extras.t9s.io/ru-macs: '["e8:c7:4f:25:81:c9", "e8:c7:4f:25:81:c9"]'
+                extras.t9s.io/mtu: '9000'
+                extras.t9s.io/o1-remote-ipv4: 192.168.50.23
+                extras.t9s.io/liteon-ru-reboot: 'true' #'true'
+            cells:
+                -   band: n78
+                    arfcn: 623328
+                    bandwidth: 100MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 2.5ms
+                        dl-slots: 3
+                        dl-symbols: 6
+                        ul-slots: 1
+                        ul-symbols: 4
+                          #controller: flexric.liteon
+            core-networks:
+                - open5gs.liteon
+        -   name: oai-gnb-2
+            stack: 5g-sa
+            model: oai-ran/monolithic-gnb-ru #cu-du-ru
+            identity:
+                an-id: 31
+                tracking-area: 1
+            radio:
+                device: oran-7.2
+                antenna:
+                    formation: 4x4
+            scheduling:
+                nodeName: bubble3
+            annotations:
+                extras.t9s.io/pci-ids: '["0000:01:11.0", "0000:01:11.1"]'
+                extras.t9s.io/du-macs: '["02:11:22:33:44:68", "02:11:22:33:44:69"]'
+                extras.t9s.io/ru-macs: '["e8:c7:4f:25:81:e1", "e8:c7:4f:25:81:e1"]'
+                extras.t9s.io/mtu: '9000'
+                extras.t9s.io/o1-remote-ipv4: 192.168.50.24
+                extras.t9s.io/liteon-ru-reboot: 'true' #'true'
+            cells:
+                -   band: n78
+                    arfcn: 630048
+                    bandwidth: 100MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 2.5ms
+                        dl-slots: 3
+                        dl-symbols: 6
+                        ul-slots: 1
+                        ul-symbols: 4
+                          #controller: flexric.liteon
+            core-networks:
+                - open5gs.liteon
+    core:
+        -   name: open5gs
+            stack: 5g-sa
+            model: open5gs/5gc
+            profiles:
+                - debug
+            identity:
+                region: 128
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+
+#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+
+

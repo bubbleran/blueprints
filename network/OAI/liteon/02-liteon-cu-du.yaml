@@ -1,0 +1,68 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: liteon
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: 12.1.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        -   name: oai-gnb
+            stack: 5g-sa
+            model: oai-ran/cu-du-ru-liteon
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: oran-7.2
+                antenna:
+                    formation: 4x4
+            scheduling:
+                nodeName: bubble3 # gNB/CU-DU node name
+            annotations:
+                # PCI IDs obtained by running `dpdk-devbind.py --status` in the CU-DU node
+                extras.t9s.io/pci-ids: '["0000:01:11.0", "0000:01:11.1"]'
+                # VF MACs obtained for dpdk0 interface by running `ip link show` in CU-DU node
+                extras.t9s.io/du-macs: '["02:11:22:33:44:66", "02:11:22:33:44:67"]'
+                # RU MAC (repeated) obtained by logging into RU and running `show eth-info`
+                extras.t9s.io/ru-macs: '["e8:c7:4f:25:80:f9", "e8:c7:4f:25:80:f9"]'
+                extras.t9s.io/mtu: '9000'
+                # RU IP used for logging into it
+                extras.t9s.io/o1-remote-ipv4: 192.168.1.40
+                # Flag for reboot, after first use, it can be set to `false` if values in 'cells' is not changed
+                extras.t9s.io/liteon-ru-reboot: 'true' #'false'
+            cells:
+                -   band: n78
+                    arfcn: 623328  # Center Freq. at 3350 MHz
+                    bandwidth: 100MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 2.5ms
+                        dl-slots: 3
+                        dl-symbols: 6
+                        ul-slots: 1
+                        ul-symbols: 4
+            core-networks:
+                - open5gs.liteon
+    core:
+        -   name: open5gs
+            stack: 5g-sa
+            model: open5gs/5gc
+            profiles:
+                - debug
+            identity:
+                region: 128
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 4.4.4.4
+
+#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#

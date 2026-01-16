@@ -1,0 +1,82 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: bubbleran
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: "internet"
+            network-mode: "IPv4"
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: "12.1.1.0/24"
+            ipv6-range: "2001:db8:1::/64"
+    access:
+        -   name: oai-gnb
+            stack: 5g-sa
+            model: oai-ran/monolithic-gnb
+            identity:
+                an-id: 50
+            radio:
+                device: rf-sim
+            cells:
+                -   band: n78
+                    arfcn: 641280
+                    bandwidth: 40MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5ms
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            core-networks:
+                - core.bubbleran
+    core:
+        -   name: core
+            stack: 5g-sa
+            model: oai-cn/minimal
+            identity:
+                region: 0
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+
+
+#--- You can use terminal_rfsim.yaml or directly copy-paste it as the following to configure a UE for this network ---#
+
+---
+apiVersion: athena.trirematics.io/v1
+kind: Terminal
+metadata:
+    name: ue1
+    namespace: trirematics
+spec:
+    vendor: oai
+    stack: 5g-sa
+    model: terminal/nr-rfsim
+    preferred-access: oai-gnb.bubbleran
+    target-cores:
+        - core.bubbleran
+    identity:
+        imsi: "001010000000001"
+        pin: "1234"
+        opc: "0xc42449363bbad02b66d16bc975d77cc1"
+        key: "0xfec86ba6eb707ed08905757b1bb44b8f"
+        sqn: "0xff9bb4000001"
+    slice:
+        dnn: "internet"
+        network-mode: "IPv4"
+        service-type: eMBB
+        differentiator: 0x000000
+    radio:
+        bands:
+            - n78
+    readiness-check:
+        method: ping
+        target: google-ip
+        interface-name: oaitun_ue0

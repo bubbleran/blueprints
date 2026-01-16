@@ -1,0 +1,76 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: bubbleran
+    namespace: trirematics
+spec:
+    # LiteON AIO only supports one slice configuration
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: 12.1.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        # To access the AIO via the serial port, plug the USB to the control plane node and run the following command:
+        # sudo picocom --baud 115200 {proper-device-under-/dev/ttyUSB*}
+        # To exit picocom, press Ctrl+A followed by Ctrl+X.
+        # To access the AIO via SSH, run the following command:
+        # ssh user@{IP-address}
+        # The default password is: Usr5566#
+        -   name: liteon
+            stack: 5g-sa
+            model: bubbleran/liteon-aio
+            scheduling:
+                nodeName: bubble1 # Change with an actual node name of your cluster (node needs to be able to reach the AIO)
+            annotations:
+                # In the current version only the RJ-45 interface of the LiteON AIO is supported and this is the IP
+                # address of the RJ-45 interface.
+                extras.t9s.io/o1-remote-ipv4: 192.168.1.60
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: oran-7.2
+                antenna:
+                    # LiteON AIO accepts values from 0 to 24 dBm for the Tx gain and does not accept Rx gain values.
+                    tx-gain: "24"
+                    # Default formation for LiteON AIO is 4 DL layers and 2 UL layers and cannot be changed in this
+                    # version.
+                    formation: 4x2
+            # LiteON AIO only supports a single cell
+            cells:
+                # LiteON AIO only supports band n78, using other bands would have no effect.
+                -   band: n78
+                    # LiteON AIO only supports the following combination of ARFCN and bandwidth:
+                    # - ARFCN: 625382, Bandwidth: 80MHz
+                    # - ARFCN: 628334, Bandwidth: 50MHz
+                    # - ARFCN: 628334, Bandwidth: 100MHz
+                    # - ARCFN: 647484, Bandwidth: 100MHz (default)
+                    # - ARFCN: 650000, Bandwidth: 100MHz
+                    arfcn: 650000
+                    bandwidth: 100MHz
+                    subcarrier-spacing: 30kHz # LiteON AIO only supports 30kHz subcarrier spacing
+                    # In the current version we only support the following slot configuration for LiteON AIO:
+                    tdd-config:
+                        period: 5ms
+                        dl-slots: 7
+                        dl-symbols: 0
+                        ul-slots: 2
+                        ul-symbols: 6
+    core:
+        -   name: open5gs
+            stack: 5g-sa
+            model: open5gs/5gc
+            profiles:
+                - debug
+            identity:
+                region: 128
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4

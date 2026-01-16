@@ -1,0 +1,54 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: bubbleran
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: "internet"
+            network-mode: "IPv4"
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: "12.1.1.0/24"
+            ipv6-range: "2001:db8:1::/64"
+    access:
+        -   name: oai-gnb
+            stack: 5g-sa
+            model: oai-ran/monolithic-gnb
+            identity:
+                an-id: 50
+            radio:
+                device: rf-sim
+            cells:
+                -   band: n78
+                    arfcn: 641280
+                    bandwidth: 40MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5ms
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            controller: flexric.bubbleran
+            core-networks:
+                - core.bubbleran
+    core:
+        -   name: core
+            stack: 5g-sa
+            model: oai-cn/minimal
+            identity:
+                region: 0
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+    edge:
+        -   name: flexric
+            stack: 5g-sa
+            model: mosaic5g/flexric
+
+#--- Use terminal_rfsim.yaml to configure a UE for this network ---#

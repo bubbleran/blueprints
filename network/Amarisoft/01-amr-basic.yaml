@@ -1,0 +1,56 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: amarisoft
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: 12.2.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        -   name: amr-ran
+            stack: 5g-sa
+            model: amarisoft/basic-ran
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: amr-sdr50
+            cells:
+                -   band: n78
+                    arfcn: 641760 #632750 #640008 #641280 #632628
+                    bandwidth: 40MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5ms
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            core-networks:
+                - amr-cn.amarisoft
+            scheduling:
+               nodeSelector:
+                   kubernetes.io/hostname: moto
+    core:
+        -   name: amr-cn
+            stack: 5g-sa
+            model: amarisoft/basic-cn
+            profiles:
+                - debug
+            identity:
+                region: 128
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 172.21.3.100
+            secondary: 8.8.8.8
+
+#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+

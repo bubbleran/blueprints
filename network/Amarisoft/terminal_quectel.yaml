@@ -1,0 +1,28 @@
+apiVersion: athena.trirematics.io/v1
+kind: Terminal
+metadata:
+    name: quectel-002
+    namespace: trirematics
+spec:
+    vendor: amr
+    stack: 5g-sa
+    model: terminal/external
+    target-cores:
+        - amr-cn.amarisoft
+    identity:
+        imsi: "001010000000002"
+        pin: "NULL"
+        opc: "0x78b231c7d7aaba5f2461e302bfde200c"
+        key: "0x454f3c24641d225d63bcca2ce3d90cdc"
+        sqn: "0x000000000540"
+    slice:
+        dnn: internet
+        network-mode: IPv4
+        service-type: eMBB
+        differentiator: 0x000000
+    radio:
+        bands:
+            - n78
+    readiness-check:
+        method: ping
+        target: google-ip

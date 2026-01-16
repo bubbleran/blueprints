@@ -1,0 +1,54 @@
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: srs
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: "internet"
+            network-mode: "IPv4"
+            service-type: eMBB
+            differentiator: 0x000000
+            ipv4-range: "12.1.1.0/24"
+            ipv6-range: "2001:db8:1::/64"
+    access:
+        -   name: oai-gnb
+            stack: 5g-sa
+            model: srs/monolithic-gnb
+            identity:
+                an-id: 50
+            radio:
+                device: uhd-b200
+            cells:
+                -   band: n78
+                    arfcn: 641280
+                    bandwidth: 40MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5ms
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            controller: flexric.srs
+            core-networks:
+                - minimal.srs
+    core:
+        -   name: minimal
+            stack: 5g-sa
+            model: oai-cn/minimal
+            identity:
+                region: 0
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+    edge:
+        -   name: flexric
+            stack: 5g-sa
+            model: mosaic5g/flexric
+
+#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
