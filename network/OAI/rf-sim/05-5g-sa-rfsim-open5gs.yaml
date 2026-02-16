@@ -46,4 +46,4 @@ spec:
             default: 8.8.8.8
             secondary: 8.8.4.4
 
-#--- Use terminal_rfsim.yaml to configure a UE for this network ---#
+#--- Use Terminals/terminal_rfsim.yaml to configure a UE for this network ---#

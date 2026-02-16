@@ -4,14 +4,14 @@ metadata:
     name: ue1
     namespace: trirematics
 spec:
-    vendor: oai
+    vendor: oai # only available option
     stack: 5g-sa
-    model: terminal/nr-rfsim
-    preferred-access: oai-gnb.bubbleran
+    model: terminal/nr-rfsim 
+    #preferred-access: <access-name>.<network-name> # Access name and network name preferred by the terminal
     target-cores:
-        - core.bubbleran
+        - <core-name>.<network-name> # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
     identity:
-        imsi: "001010000000001"
+        imsi: "001010000000001" # Programmable IMSI of the terminal
         pin: "1234"
         opc: "0xc42449363bbad02b66d16bc975d77cc1"
         key: "0xfec86ba6eb707ed08905757b1bb44b8f"
@@ -23,7 +23,7 @@ spec:
         differentiator: 0x000000
     radio:
         bands:
-            - n78
+            - n78 # Radio band configured in the network
     readiness-check:
         method: ping
         target: google-ip

@@ -52,5 +52,5 @@ spec:
             default: 172.21.3.100
             secondary: 8.8.8.8
 
-#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+#--- Use Terminals/terminal_external.yaml and/or Terminals/terminal_quectel.yaml to configure UEs for this network ---#
 

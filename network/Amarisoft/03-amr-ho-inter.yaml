@@ -77,4 +77,4 @@ spec:
             default: 8.8.8.8
             secondary: 8.8.4.4
 
-#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+#--- Use Terminals/terminal_external.yaml and/or Terminals/terminal_quectel.yaml to configure UEs for this network ---#

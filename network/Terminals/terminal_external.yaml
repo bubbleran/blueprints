@@ -1,0 +1,27 @@
+apiVersion: athena.trirematics.io/v1
+kind: Terminal
+metadata:
+    name: ue01
+    namespace: trirematics
+spec:
+    vendor: oai # or amarisoft for Amarisoft networks
+    stack: 5g-sa
+    model: terminal/quectel
+    #preferred-access: <access-name>.<network-name> # Access name and network name preferred by the terminal
+    target-cores:
+        - <core-name>.<network-name> # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
+    identity:
+        imsi: "001010000000001" # SIM card IMSI
+        pin: "1234" # SIM card PIN
+        opc: "0xC42449363BBAD02B66D16BC975D77CC1" # SIM card OPC
+        key: "0xfec86ba6eb707ed08905757b1bb44b8f" # SIM card Key
+        sqn: "0xff9bb4000001" # SIM card SQN
+    slice:
+        dnn: internet # Slice DNN
+        network-mode: IPv4 
+        service-type: eMBB
+        differentiator: 0x000000
+    radio:
+        bands:
+            - n78  # Radio band configured in the network
+            # -n77 # List multiple bands if inter-frequency handover is configured

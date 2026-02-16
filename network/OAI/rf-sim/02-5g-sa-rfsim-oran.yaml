@@ -51,4 +51,4 @@ spec:
             stack: 5g-sa
             model: mosaic5g/flexric
 
-#--- Use terminal_rfsim.yaml to configure a UE for this network ---#
+#--- Use Terminals/terminal_rfsim.yaml to configure a UE for this network ---#
