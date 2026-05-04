@@ -15,7 +15,7 @@ spec:
     access:
         -   name: oai-gnb
             stack: 5g-sa
-            model: oai-ran/monolithic-gnb-ru-benetel
+            model: oai-ran/monolithic-gnb-ru
             identity:
                 an-id: 30
                 tracking-area: 1
@@ -23,20 +23,8 @@ spec:
                 device: oran-7.2
                 antenna:
                     formation: 4x4
-            scheduling:
-                nodeName: bubble2 # gNB/CU-DU node name (needs to have a SFP FHI reaching RU)
             annotations:
-                # PCI IDs obtained by running `dpdk-devbind.py --status` in the CU-DU node
-                extras.t9s.io/pci-ids: '["0000:01:11.1", "0000:01:11.0"]'
-                # VF MACs obtained for dpdk0 interface by running `ip link show` in CU-DU node
-                extras.t9s.io/du-macs: '["02:11:22:33:44:67", "02:11:22:33:44:66"]'
-                # RU MAC (repeated) obtained by logging into RU and running `show eth-info`
-                extras.t9s.io/ru-macs: '["8c:1f:64:d1:12:02", "8c:1f:64:d1:12:02"]'
-                extras.t9s.io/mtu: '9600'
-                # RU IP used for logging into it
-                extras.t9s.io/o1-remote-ipv4: 192.168.1.50
-                # Flag for reboot, after first use, it can be set to `false` if values in 'cells' is not changed
-                extras.t9s.io/benetel-ru-reboot: 'true' #'true'
+                extras.t9s.io/ru-vendor: 'benetel'
             cells:
                 -   band: n77
                     arfcn: 650016  # Center Freq. at 3750MHz

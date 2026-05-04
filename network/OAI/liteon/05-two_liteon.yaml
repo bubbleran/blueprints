@@ -23,15 +23,8 @@ spec:
                 device: oran-7.2
                 antenna:
                     formation: 4x4
-            scheduling:
-                nodeName: bubble2
             annotations:
-                extras.t9s.io/pci-ids: '["0000:01:11.0", "0000:01:11.1"]' 
-                extras.t9s.io/du-macs: '["02:11:22:33:44:66", "02:11:22:33:44:67"]' 
-                extras.t9s.io/ru-macs: '["e8:c7:4f:25:81:c9", "e8:c7:4f:25:81:c9"]'
-                extras.t9s.io/mtu: '9000'
-                extras.t9s.io/o1-remote-ipv4: 192.168.50.23
-                extras.t9s.io/liteon-ru-reboot: 'true' #'true'
+                extras.t9s.io/ru-vendor: 'liteon'
             cells:
                 -   band: n78
                     arfcn: 623328
@@ -56,15 +49,8 @@ spec:
                 device: oran-7.2
                 antenna:
                     formation: 4x4
-            scheduling:
-                nodeName: bubble3
             annotations:
-                extras.t9s.io/pci-ids: '["0000:01:11.0", "0000:01:11.1"]'
-                extras.t9s.io/du-macs: '["02:11:22:33:44:68", "02:11:22:33:44:69"]'
-                extras.t9s.io/ru-macs: '["e8:c7:4f:25:81:e1", "e8:c7:4f:25:81:e1"]'
-                extras.t9s.io/mtu: '9000'
-                extras.t9s.io/o1-remote-ipv4: 192.168.50.24
-                extras.t9s.io/liteon-ru-reboot: 'true' #'true'
+                extras.t9s.io/ru-vendor: 'liteon'
             cells:
                 -   band: n78
                     arfcn: 630048

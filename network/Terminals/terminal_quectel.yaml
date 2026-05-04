@@ -7,9 +7,9 @@ spec:
     vendor: oai # or amarisoft for Amarisoft networks
     stack: 5g-sa
     model: terminal/quectel
-    #preferred-access: <access-name>.<network-name> # Access name and network name preferred by the terminal
+    preferred-access: [<access-name>.<network-name>] # Access name and network name preferred by the terminal
     target-cores:
-        - <core-name>.<network-name> # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
+        - [<core-name>.<network-name>] # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
     identity:
         imsi: "001010000000002" # SIM card IMSI
         pin: "1234" # SIM card PIN
