@@ -19,7 +19,7 @@ spec:
     slice:
         dnn: internet # Slice DNN
         network-mode: IPv4 
-        service-type: eMBB
+        service-type: 1
         differentiator: 0x000000
     radio:
         bands:

@@ -9,7 +9,7 @@ spec:
         -   plmn: "00101"
             dnn: internet
             network-mode: IPv4
-            service-type: eMBB
+            service-type: 1
             differentiator: 0x000000
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
@@ -55,7 +55,7 @@ spec:
                     subcarrier-spacing: 30kHz # LiteON AIO only supports 30kHz subcarrier spacing
                     # In the current version we only support the following slot configuration for LiteON AIO:
                     tdd-config:
-                        period: 5ms
+                        period: 5000
                         dl-slots: 7
                         dl-symbols: 0
                         ul-slots: 2

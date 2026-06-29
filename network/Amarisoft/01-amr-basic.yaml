@@ -8,7 +8,7 @@ spec:
         -   plmn: "00101"
             dnn: internet
             network-mode: IPv4
-            service-type: eMBB
+            service-type: 1
             differentiator: 0x000000
             ipv4-range: 12.2.1.0/24
             ipv6-range: 2001:db8:1::/64
@@ -27,7 +27,7 @@ spec:
                     bandwidth: 40MHz
                     subcarrier-spacing: 30kHz
                     tdd-config:
-                        period: 5ms
+                        period: 5000
                         dl-slots: 7
                         dl-symbols: 6
                         ul-slots: 2
