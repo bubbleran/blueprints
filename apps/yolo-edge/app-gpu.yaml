@@ -1,0 +1,40 @@
+# brc cdk app spec for the YOLO edge app on an NVIDIA GPU. Use it with -f:
+#   brc cdk app build -f app-gpu.yaml && brc cdk app push -f app-gpu.yaml && brc cdk app deploy -f app-gpu.yaml
+name: yolo-edge-gpu
+
+build:
+    dockerfile: Dockerfile
+    args:
+        # A CUDA build the node driver supports (see nvidia.com/cuda.runtime-version.full on the node).
+        TORCH_INDEX_URL: https://download.pytorch.org/whl/cu128
+        YOLO_WEIGHTS: yolo11n.pt
+
+# Pull on every start: a redeploy after brc cdk app push then runs the new :latest image.
+image-pull-policy: Always
+
+ports:
+    -   name: http
+        port: 9000
+
+resources:
+    requests: {cpu: 1000m, memory: 2Gi}
+    limits:   {cpu: 4000m, memory: 6Gi}
+
+probes:
+    readiness: {path: /health, port: http, initial-delay: 20, period: 10}
+    liveness:  {path: /health, port: http, initial-delay: 60, period: 20}
+
+# One GPU share, and the NVIDIA runtime, which mounts the driver into the container.
+# Without runtime-class the Pod still starts, but PyTorch sees no GPU and runs on the CPU.
+gpus: 1
+runtime-class: nvidia
+node-selector:
+    nvidia.com/gpu.present: "true"
+
+ui:
+    name: YOLO Edge GPU
+    description: Object detection on the camera feeds sent by UEs (GPU)
+    icon: video
+    path-name: yolo-edge-gpu
+    path: /
+    port: http

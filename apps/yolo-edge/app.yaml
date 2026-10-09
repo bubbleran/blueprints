@@ -1,0 +1,35 @@
+# brc cdk app spec for the YOLO edge app (CPU).
+# brc cdk app build   builds the image from the Dockerfile
+# brc cdk app push    pushes it to the cluster-local registry
+# brc cdk app deploy  runs it in the trirematics namespace
+name: yolo-edge
+
+build:
+    dockerfile: Dockerfile
+    args:
+        TORCH_INDEX_URL: https://download.pytorch.org/whl/cpu
+        YOLO_WEIGHTS: yolo11n.pt
+
+# Pull on every start: a redeploy after brc cdk app push then runs the new :latest image.
+image-pull-policy: Always
+
+ports:
+    -   name: http
+        port: 9000
+
+resources:
+    requests: {cpu: 1000m, memory: 2Gi}
+    limits:   {cpu: 4000m, memory: 4Gi}
+
+probes:
+    readiness: {path: /health, port: http, initial-delay: 10, period: 10}
+    liveness:  {path: /health, port: http, initial-delay: 30, period: 20}
+
+# A tab in the MX-UI, opening the page with every live feed.
+ui:
+    name: YOLO Edge
+    description: Object detection on the camera feeds sent by UEs
+    icon: video
+    path-name: yolo-edge
+    path: /
+    port: http
