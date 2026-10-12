@@ -1,0 +1,8 @@
+# brc cdk app spec used to build and push the CARLA client image only:
+#   brc cdk app build && brc cdk app push
+# The image then runs as a Terminal application (see ../carla-net.yaml), not as a detached app.
+name: carla-client
+build:
+    dockerfile: Dockerfile
+    args:
+        CARLA_VERSION: "0.9.16"

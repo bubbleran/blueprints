@@ -8,6 +8,7 @@ The network blueprints are organized by vendor and hardware to make them easy to
 
 ```
 apps/
+├───carla/
 └───yolo-edge/
 network/
 ├───Amarisoft/
@@ -57,3 +58,4 @@ This repository includes blueprints for the following vendors and platforms:
 ## Available Edge Applications
 
 -   **[YOLO edge app](apps/yolo-edge/README.md)**: object detection on camera frames sent by UEs over the 5G network, on CPU or NVIDIA GPU.
+-   **[CARLA camera feed over 5G](apps/carla/README.md)**: the CARLA driving simulator as the camera of a soft UE, streaming over 5G to the YOLO edge app.

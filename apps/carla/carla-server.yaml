@@ -1,0 +1,40 @@
+# brc cdk app spec for a headless CARLA 0.9.16 server on an NVIDIA GPU node.
+# brc cdk app deploy -f carla-server.yaml
+name: carla
+
+# Public image from Docker Hub, no pull secret needed.
+image: carlasim/carla:0.9.16
+image-pull-secret: ""
+
+# Headless server: render off screen on the GPU, no audio.
+command: [/bin/bash, /workspace/CarlaUE4.sh]
+args:
+    - -RenderOffScreen
+    - -nosound
+    - -quality-level=Low
+    - -carla-rpc-port=2000
+
+ports:
+    -   name: rpc
+        port: 2000
+    -   name: stream
+        port: 2001
+    -   name: secondary
+        port: 2002
+
+env:
+    # graphics + utility + compute: the driver must also provide Vulkan, not only CUDA.
+    NVIDIA_DRIVER_CAPABILITIES: all
+
+resources:
+    requests: {cpu: 2000m, memory: 8Gi}
+    limits:   {cpu: 8000m, memory: 16Gi}
+
+probes:
+    readiness: {port: rpc, initial-delay: 30, period: 10}
+    liveness:  {port: rpc, initial-delay: 120, period: 20, failure-threshold: 6}
+
+gpus: 1
+runtime-class: nvidia
+node-selector:
+    nvidia.com/gpu.present: "true"
