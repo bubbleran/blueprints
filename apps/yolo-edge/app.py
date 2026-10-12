@@ -200,7 +200,8 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 body{{margin:0;background:#0f1115;color:#e6e6e6;font:14px system-ui,sans-serif}}
 header{{padding:12px 16px}} h1{{font-size:16px;margin:0}} .m{{color:#9aa0a6}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr));gap:12px;padding:0 16px 16px}}
-figure{{margin:0;background:#171a21;border-radius:8px;overflow:hidden}} img{{display:block;width:100%}}
+figure{{margin:0;background:#171a21;border-radius:8px;overflow:hidden}}
+img{{display:block;width:100%;max-height:70vh;object-fit:contain;background:#000}}
 figcaption{{padding:8px 10px}}
 </style></head><body><header><h1>YOLO edge app</h1>
 <div class="m">model {model} on {device}. Live feeds refresh continuously, the list every 15 s.</div></header>
