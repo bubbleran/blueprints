@@ -67,30 +67,41 @@ The image stays in your cluster. The CDK logs in with the `bubbleran-hub` creden
 
 ```bash
 brc cdk app deploy
-kubectl get deploy,svc,pod -n trirematics -l cdk.bubbleran.io/edge-app=yolo-edge
+brc cdk app status
+brc cdk app logs
+```
+
+```
+Pod      yolo-edge-55699d4b98-6prbq  Running  ready=true  restarts=0  node=mirin
+         image registry.<cluster>.local:5000/telco-fabric/<org>/yolo-edge:latest
+Service  yolo-edge  ClusterIP 10.102.201.39  http:9000
+         in-cluster DNS yolo-edge.trirematics.svc.cluster.local
 ```
 
 This runs the app in the `trirematics` namespace as a detached edge app, behind the
 ClusterIP Service `yolo-edge` on port 9000. It is not part of any Network, so it keeps
-running when Networks come and go.
+running when Networks come and go. To run it as part of a Network instead, see
+[Running it as part of a Network](#running-it-as-part-of-a-network).
 
 ## 4. Send frames
 
-Any client that can reach the Service can post frames:
+Any client that can reach the Service can post frames. To send them through the 5G
+network, send from a UE and bind to its tunnel interface, `oaitun_ue1` for an OAI soft UE.
+`brc cic <element> shell -- <command>` runs a command in the UE. The app serves a test
+picture at `/sample.jpg`, so the UE needs no file and no internet access:
 
 ```bash
-curl -s -F frame=@bus.jpg -F actor_id=car1 http://yolo-edge.trirematics.svc.cluster.local:9000/ingest/frame/front
+APP=http://yolo-edge.trirematics.svc.cluster.local:9000
+brc cic <ue-element> shell -- "curl -s --interface oaitun_ue1 -o /tmp/sample.jpg $APP/sample.jpg && \
+    curl -s --interface oaitun_ue1 -F frame=@/tmp/sample.jpg -F actor_id=car1 $APP/ingest/frame/front"
 ```
 
-To send them through the 5G network instead of the Pod network, send from a UE and bind
-to its tunnel interface. For an OAI soft UE that is `oaitun_ue1`:
-
-```bash
-kubectl cp bus.jpg trirematics/<ue-pod>:/tmp/bus.jpg -c image
-kubectl exec -n trirematics deploy/<ue-deployment> -c image -- \
-    curl -s --interface oaitun_ue1 -F frame=@/tmp/bus.jpg -F actor_id=car1 \
-    http://yolo-edge.trirematics.svc.cluster.local:9000/ingest/frame/front
 ```
+{"ok":true,"actor_id":"car1","camera":"front","detections":{"total":5,"objects":{"bus":{"count":1,"best_conf":0.9402},"person":{"count":4,"best_conf":0.8882}}}}
+```
+
+`<ue-element>` is the UE's Element name as `brc observe` lists it, for example
+`oai-ue.ue-edge.ue-edge` for the Terminal `ue-edge`.
 
 The frames then travel UE -> gNB -> UPF -> app. With the `oai-cn/minimal` core, the UPF
 source-NATs this traffic, so the app sees the UPF Pod as the client.
@@ -102,10 +113,7 @@ separate feed. Older clients that send `truck_id` are accepted too.
 
 The app's page lists every live feed with its annotated stream and the detected objects.
 
-- **MX-UI:** the spec registers a **YOLO Edge** tab under Services.
-- **Port-forward:** run
-  `kubectl -n trirematics port-forward svc/yolo-edge 9000:9000`, then open
-  `http://localhost:9000/`.
+Open the **YOLO Edge** tab under Services in the MX-UI: the spec registers it.
 
 | Endpoint | Returns |
 |---|---|
@@ -116,6 +124,7 @@ The app's page lists every live feed with its annotated stream and the detected 
 | `GET /frame/{actor}/{camera}.jpg` | Latest frame, annotated unless `?annotated=0`. |
 | `GET /detections/{actor}` | Latest detections per camera. |
 | `GET /health` | Status, model and the inference device actually in use. |
+| `GET /sample.jpg` | A test picture, to try the app without a camera. |
 
 Feeds that send nothing for 60 seconds are hidden.
 
@@ -130,12 +139,50 @@ brc cdk app deploy -f app-gpu.yaml
 ```
 
 - The cluster must expose GPUs as `nvidia.com/gpu` (NVIDIA GPU Operator or device plugin) and
-  have a `nvidia` RuntimeClass: `kubectl get runtimeclass`.
+  have a `nvidia` RuntimeClass. `brc cdk app deploy` checks both before deploying and lists
+  the GPU nodes it found.
 - The CUDA version in `TORCH_INDEX_URL` must not be newer than the node driver supports. The
   node label `nvidia.com/cuda.runtime-version.full` gives that limit.
 - Without `runtime-class: nvidia` the Pod still starts, but PyTorch sees no GPU and the app
   runs on the CPU without an error. `GET /health` shows the device actually used.
 - The image is much larger, about 7 GB.
+
+## Running it as part of a Network
+
+A detached app runs until you delete it. To create and remove the app together with a
+Network, run it as an Element of that Network instead. The CDK builds the
+CompositionModel from the same `app.yaml`:
+
+```bash
+brc cdk app model build      # print the model, without installing it
+brc cdk app model install
+```
+
+```
+WARN resources are ignored: the Element gets the model's defaults
+WARN the HTTP probes run curl inside the container, so the image must ship curl
+INFO CompositionModel installed in namespace trirematics. Reference it from a Network's edge section as model: yolo-edge/yolo-edge
+```
+
+Then add the app to the `edge` section of a Network and install the Network as usual:
+
+```yaml
+spec:
+    edge:
+        -   name: yolo
+            stack: 5g-sa
+            model: yolo-edge/yolo-edge
+```
+
+The Element is called `yolo-edge.yolo.<network>`. Follow it with `brc observe`, and get its
+address with `brc extract port yolo-edge.yolo.<network> http`.
+
+A managed Element runs the image's own `CMD`, and Athena schedules it: the spec's `command`,
+`args`, `env`, `resources`, `node-selector` and `runtime-class` do not apply, and the CDK
+warns about the ones you set. Running `brc cdk app model install` again after a new push
+restarts the running Elements on the new image.
+
+Remove the app from every Network first, then the model: `brc cdk app model delete`.
 
 ## Updating
 

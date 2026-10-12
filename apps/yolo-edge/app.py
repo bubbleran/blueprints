@@ -11,12 +11,14 @@ and serves them as images, MJPEG streams and JSON detections.
     GET  /stream/{actor}/{camera}.mjpg live MJPEG stream of the annotated frames
     GET  /detections/{actor}           latest detections per camera
     GET  /health                       liveness and the loaded model
+    GET  /sample.jpg                   a test image (the ultralytics bus picture)
 """
 import argparse
 import html
 import threading
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import cv2
@@ -100,6 +102,19 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 @app.get("/health")
 def health():
     return {"ok": True, "model": state.model_name, "device": state.device, "feeds": len(live_feeds())}
+
+
+@app.get("/sample.jpg")
+def sample():
+    """Serves the test picture shipped with ultralytics, so a UE without internet access
+    can fetch a frame from the app and post it back over the 5G network."""
+    try:
+        import ultralytics
+
+        path = Path(ultralytics.__file__).parent / "assets" / "bus.jpg"
+        return Response(path.read_bytes(), media_type="image/jpeg")
+    except (ImportError, OSError):
+        raise HTTPException(404, "no sample image in this build")
 
 
 @app.post("/ingest/frame/{camera}")

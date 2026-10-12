@@ -23,7 +23,7 @@ Pod network, because it simulates the camera, not traffic the UE would carry.
 - Everything the [YOLO edge app](../yolo-edge/README.md) needs: the cluster-local registry,
   `brc` with `cdk app`, a `brc login`, and `docker` on the control-plane node.
 - An NVIDIA GPU node with at least 8 GB of GPU memory, exposed as `nvidia.com/gpu`, and a
-  `nvidia` RuntimeClass (`kubectl get runtimeclass`). CARLA renders off screen with Vulkan.
+  `nvidia` RuntimeClass. `brc cdk app deploy` checks both. CARLA renders off screen with Vulkan.
 - About 20 GB of free disk on that node: the CARLA image alone is 8.6 GB once unpacked.
 - An Athena release that accepts Terminal applications (container names starting with `app-`).
 - The `terminal/oai-ue` model (Falcon), and the `oai-ran` and `oai-cn` models.
@@ -38,7 +38,8 @@ Service `yolo-edge`, which the client posts to.
 ```bash
 cd blueprints/apps/carla
 brc cdk app deploy -f carla-server.yaml
-kubectl logs -n trirematics deploy/carla -f
+brc cdk app status carla
+brc cdk app logs carla -F
 ```
 
 The image comes from Docker Hub (`carlasim/carla:0.9.16`) and its first pull takes several
@@ -78,7 +79,7 @@ The client waits for `oaitun_ue1`, connects to CARLA, spawns the ego vehicle and
 and starts sending:
 
 ```bash
-kubectl logs -n trirematics deploy/oai-ue.car1.car1 -c app-carla-client -f
+brc extract logs oai-ue.car1.car1 | grep carla-client
 ```
 
 ```
@@ -99,8 +100,9 @@ To confirm the frames cross the 5G network, check where the YOLO app sees them f
 Pod, not from the UE Pod:
 
 ```bash
-kubectl get pods -n trirematics -o wide | grep -E 'upf.cn.carla-net|oai-ue.car1'
-kubectl logs -n trirematics deploy/yolo-edge --since=10s | grep ingest
+brc extract status upf.cn.carla-net
+brc extract status oai-ue.car1.car1
+brc cdk app logs yolo-edge --tail 20 | grep ingest
 ```
 
 ## Client settings
