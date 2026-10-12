@@ -30,9 +30,8 @@ resources:
     requests: {cpu: 2000m, memory: 8Gi}
     limits:   {cpu: 8000m, memory: 16Gi}
 
-probes:
-    readiness: {port: rpc, initial-delay: 30, period: 10}
-    liveness:  {port: rpc, initial-delay: 120, period: 20, failure-threshold: 6}
+# No probes: CARLA's RPC server can crash when a health check opens and drops a connection.
+# If the server dies, the process exits and Kubernetes restarts the container anyway.
 
 gpus: 1
 runtime-class: nvidia

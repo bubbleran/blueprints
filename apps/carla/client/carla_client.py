@@ -43,6 +43,12 @@ NPC_VEHICLES = int(os.environ.get("NPC_VEHICLES", "30"))
 NPC_WALKERS = int(os.environ.get("NPC_WALKERS", "20"))
 EGO_FILTER = os.environ.get("EGO_FILTER", "vehicle.tesla.model3")
 SEED = int(os.environ.get("SEED", "0")) or None
+# The Traffic Manager steers reliably only in synchronous mode: with the server running
+# free, vehicles leave the road within seconds. One client per CARLA server (TICK=1) sets
+# synchronous mode and advances the world at SIM_FPS, paced to wall-clock time. Clients of
+# further vehicles on the same server use TICK=0.
+TICK = os.environ.get("TICK", "1") == "1"
+SIM_FPS = float(os.environ.get("SIM_FPS", "10"))
 
 log = logging.getLogger("carla-client")
 stop = threading.Event()
@@ -92,6 +98,12 @@ def spawn_world(client, actors):
     rng.shuffle(spawn_points)
     tm = client.get_trafficmanager(TM_PORT)
     tm.set_global_distance_to_leading_vehicle(2.5)
+    if TICK:
+        settings = world.get_settings()
+        settings.synchronous_mode = True
+        settings.fixed_delta_seconds = 1.0 / SIM_FPS
+        world.apply_settings(settings)
+    tm.set_synchronous_mode(world.get_settings().synchronous_mode)
 
     ego_bp = (lib.filter(EGO_FILTER) or lib.filter("vehicle.*"))[0]
     ego_bp.set_attribute("role_name", "hero")
@@ -116,6 +128,7 @@ def spawn_world(client, actors):
 
     walkers = 0
     controller_bp = lib.find("controller.ai.walker")
+    walker_pairs = []
     for _ in range(NPC_WALKERS):
         loc = world.get_random_location_from_navigation()
         if loc is None:
@@ -124,10 +137,14 @@ def spawn_world(client, actors):
         if walker is None:
             continue
         ctrl = world.spawn_actor(controller_bp, carla.Transform(), attach_to=walker)
-        ctrl.start()
-        ctrl.go_to_location(world.get_random_location_from_navigation())
+        walker_pairs.append(ctrl)
         actors.extend([ctrl, walker])
         walkers += 1
+    if TICK and walker_pairs:
+        world.tick()  # walkers must exist on the server before their controllers start
+    for ctrl in walker_pairs:
+        ctrl.start()
+        ctrl.go_to_location(world.get_random_location_from_navigation())
 
     cam_bp = lib.find("sensor.camera.rgb")
     cam_bp.set_attribute("image_size_x", str(WIDTH))
@@ -138,7 +155,9 @@ def spawn_world(client, actors):
     actors.append(cam)
     log.info("map %s, ego %s, %d NPC vehicles, %d walkers, camera %dx%d at %.0f fps",
              world.get_map().name, ego.type_id, npcs, walkers, WIDTH, HEIGHT, FPS)
-    return cam
+    if TICK:
+        log.info("synchronous mode at %.0f Hz, this client ticks the world", SIM_FPS)
+    return world, cam
 
 
 def sender(frames, stats):
@@ -211,14 +230,44 @@ def main():
             pass
         frames.put_nowait((enc.tobytes(), time.time()))
 
+    world = None
     try:
-        cam = spawn_world(client, actors)
+        world, cam = spawn_world(client, actors)
         cam.listen(on_image)
         threading.Thread(target=sender, args=(frames, stats), daemon=True).start()
         threading.Thread(target=report, args=(stats,), daemon=True).start()
-        while not stop.wait(1):
-            pass
+        if TICK:
+            period = 1.0 / SIM_FPS
+            next_tick = time.monotonic()
+            ticks = 0
+            while not stop.is_set():
+                ticks += 1
+                if ticks % max(1, int(5 * SIM_FPS)) == 0 and not world.get_settings().synchronous_mode:
+                    # Another client switched the server back, for example a replaced UE Pod
+                    # that is still shutting down. Take synchronous mode again.
+                    log.warning("server left synchronous mode, setting it again")
+                    settings = world.get_settings()
+                    settings.synchronous_mode = True
+                    settings.fixed_delta_seconds = 1.0 / SIM_FPS
+                    world.apply_settings(settings)
+                world.tick()
+                next_tick += period
+                delay = next_tick - time.monotonic()
+                if delay > 0:
+                    stop.wait(delay)
+                else:
+                    next_tick = time.monotonic()  # the server is slower than real time
+        else:
+            while not stop.wait(1):
+                pass
     finally:
+        if TICK and world is not None:
+            # Give the server back its free-running mode, or it waits for ticks forever.
+            settings = world.get_settings()
+            settings.synchronous_mode = False
+            settings.fixed_delta_seconds = None
+            world.apply_settings(settings)
+            client.get_trafficmanager(TM_PORT).set_synchronous_mode(False)
         log.info("destroying %d actors", len(actors))
         for a in actors:
             if a.type_id.startswith("sensor."):

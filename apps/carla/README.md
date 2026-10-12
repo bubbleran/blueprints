@@ -85,7 +85,8 @@ kubectl logs -n trirematics deploy/oai-ue.car1.car1 -c app-carla-client -f
 INFO CARLA carla:2000 -> http://yolo-edge:9000/ingest/frame/front via oaitun_ue1 as car1
 INFO CARLA server 0.9.16, client 0.9.16
 INFO map Carla/Maps/Town10HD_Opt, ego vehicle.tesla.model3, 30 NPC vehicles, 19 walkers, camera 800x450 at 10 fps
-INFO sent 10.0 fps, 9.16 Mbit/s, rtt 51 ms, objects 2, dropped 0, errors 0
+INFO synchronous mode at 10 Hz, this client ticks the world
+INFO sent 10.0 fps, 8.99 Mbit/s, rtt 47 ms, objects 5, dropped 0, errors 0
 ```
 
 ## 5. Watch the feed
@@ -120,16 +121,23 @@ The client reads its settings from the environment, set in the Terminal's `appli
 | `CARLA_MAP` | loaded map | For example `Town05`. |
 | `TM_PORT` | `8000` | Traffic Manager port. Give each vehicle its own when several share a server. |
 | `SEED` | random | Makes the traffic reproducible. |
+| `TICK` | `1` | `1`: this client puts the server in synchronous mode and advances it. `0`: it only follows. |
+| `SIM_FPS` | `10` | Simulation steps per second in synchronous mode, paced to wall-clock time. The camera fires on simulation time, so keep `SIM_FPS` at or above `FPS`. |
 
 ## Several vehicles
 
-Add one Terminal per vehicle, each with its own IMSI, `ACTOR_ID` and `TM_PORT`. They share
-the CARLA world, so `NPC_VEHICLES` and `NPC_WALKERS` add up across clients.
+Add one Terminal per vehicle, each with its own IMSI, `ACTOR_ID` and `TM_PORT`. Exactly one
+of them keeps `TICK=1`; set `TICK=0` on the others. They share the CARLA world, so
+`NPC_VEHICLES` and `NPC_WALKERS` add up across clients.
 
 ## Known limits
 
-- In asynchronous mode the CARLA server renders as fast as it can and keeps the GPU busy.
-  Plan the GPU for CARLA alone, and run the YOLO app on CPU or on another GPU.
+- The client runs the server in synchronous mode, because CARLA's Traffic Manager steers
+  reliably only there: with the server running free, autopilot vehicles leave the road within
+  seconds. The server then renders one frame per simulation step. If it cannot keep up with
+  `SIM_FPS`, simulated time runs slower than wall-clock time and the feed drops below `FPS`.
+- CARLA keeps a GPU busy. Plan the GPU for CARLA alone, and run the YOLO app on CPU or on
+  another GPU.
 - The CARLA UE4 server can crash (segmentation fault). Kubernetes restarts it, and the client
   exits on the lost connection, restarts and spawns its vehicle again.
 - The rf-sim UE can drop and re-attach. Periodic SRS on the gNB
