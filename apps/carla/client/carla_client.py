@@ -24,9 +24,17 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.connection import HTTPConnection
 
+def port_env(name, default):
+    """Reads a port from the environment. Kubernetes also defines <SERVICE>_PORT as
+    tcp://<ip>:<port> for every Service in the namespace, so a Service named carla sets
+    CARLA_PORT to that form: take the number after the last colon."""
+    value = os.environ.get(name, str(default)).strip()
+    return int(value.rsplit(":", 1)[-1])
+
+
 # ── CONFIG ─────────────────────────────────────────────────────────────────
 CARLA_HOST = os.environ.get("CARLA_HOST", "carla")
-CARLA_PORT = int(os.environ.get("CARLA_PORT", "2000"))
+CARLA_PORT = port_env("CARLA_PORT", 2000)
 TM_PORT = int(os.environ.get("TM_PORT", "8000"))
 CARLA_MAP = os.environ.get("CARLA_MAP", "")  # empty keeps the loaded map
 YOLO_URL = os.environ.get("YOLO_URL", "http://yolo-edge:9000").rstrip("/")

@@ -17,6 +17,7 @@ Pod network, because it simulates the camera, not traffic the UE would carry.
 | `carla-server.yaml` | CDK spec: headless CARLA 0.9.16 server on one GPU share. |
 | `client/` | The CARLA client: source, Dockerfile and the CDK spec used to build and push it. |
 | `carla-net.yaml` | rf-sim 5G SA network and the soft UE `car1`, which runs the client as a Terminal application. |
+| `viewer/` | Optional browser view of the simulation: chase and top-down cameras on the ego vehicle. |
 
 ## Prerequisites
 
@@ -95,6 +96,8 @@ INFO sent 10.0 fps, 8.99 Mbit/s, rtt 47 ms, objects 5, dropped 0, errors 0
 Open the **YOLO Edge** tab in the MX-UI, or port-forward the Service and open
 `http://localhost:9000/`. The feed appears as `car1 / front`.
 
+![The YOLO edge app page with the car1 feed from CARLA](docs/yolo-edge-car1.jpg)
+
 To confirm the frames cross the 5G network, check where the YOLO app sees them from. With the
 `oai-cn/minimal` core, the UPF source-NATs the UE traffic, so the requests come from the UPF
 Pod, not from the UE Pod:
@@ -104,6 +107,26 @@ brc extract status upf.cn.carla-net
 brc extract status oai-ue.car1.car1
 brc cdk app logs yolo-edge --tail 20 | grep ingest
 ```
+
+## 6. Watch the simulation (optional)
+
+The feed shows only what the car's camera sees. The viewer attaches a chase camera and a
+top-down camera to the ego vehicle and serves both on a web page, with a **CARLA viewer** tab
+in the MX-UI:
+
+```bash
+cd viewer
+brc cdk app build && brc cdk app push && brc cdk app deploy
+brc cdk app status
+```
+
+![The CARLA viewer with the chase and top-down cameras](docs/carla-viewer.jpg)
+
+It follows the vehicle whose `role_name` is `FOLLOW_ROLE` (default `hero`, the name the client
+gives its ego vehicle), and picks it up again when the client restarts. It never ticks the
+world: in synchronous mode it receives frames on the ticks of the client that drives it.
+Settings: `CARLA_HOST`, `CARLA_PORT`, `FOLLOW_ROLE`, `FPS`, `WIDTH`, `HEIGHT`, `TOP_HEIGHT`
+(metres above the vehicle) and `JPEG_QUALITY`.
 
 ## Client settings
 
@@ -150,5 +173,6 @@ of them keeps `TICK=1`; set `TICK=0` on the others. They share the CARLA world, 
 
 ```bash
 brc remove network carla-net.yaml
+brc cdk app delete carla-viewer
 brc cdk app delete carla
 ```

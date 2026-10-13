@@ -1,0 +1,35 @@
+# brc cdk app spec for the CARLA viewer: a browser view of the simulation.
+#   brc cdk app build && brc cdk app push && brc cdk app deploy
+name: carla-viewer
+
+build:
+    dockerfile: Dockerfile
+    args:
+        CARLA_VERSION: "0.9.16"
+
+image-pull-policy: Always
+
+env:
+    CARLA_HOST: carla
+    FOLLOW_ROLE: hero        # the role_name the CARLA client gives its ego vehicle
+
+ports:
+    -   name: http
+        port: 8080
+
+resources:
+    requests: {cpu: 500m, memory: 512Mi}
+    limits:   {cpu: 2000m, memory: 1Gi}
+
+probes:
+    readiness: {path: /health, port: http, initial-delay: 5, period: 10}
+    liveness:  {path: /health, port: http, initial-delay: 20, period: 20}
+
+# A tab in the MX-UI, opening the chase and top-down views.
+ui:
+    name: CARLA viewer
+    description: The CARLA simulation seen from behind and above the ego vehicle
+    icon: video
+    path-name: carla-viewer
+    path: /
+    port: http
