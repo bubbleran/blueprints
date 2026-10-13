@@ -163,8 +163,11 @@ of them keeps `TICK=1`; set `TICK=0` on the others. They share the CARLA world, 
   `SIM_FPS`, simulated time runs slower than wall-clock time and the feed drops below `FPS`.
 - CARLA keeps a GPU busy. Plan the GPU for CARLA alone, and run the YOLO app on CPU or on
   another GPU.
-- The CARLA UE4 server can crash (segmentation fault). Kubernetes restarts it, and the client
-  exits on the lost connection, restarts and spawns its vehicle again.
+- The server spec has no health probes on purpose: CARLA's RPC server crashes when a probe opens
+  and drops connections. Without probes it ran for more than 18 hours on our test cluster.
+- If the client that ticks the world is killed in the middle of a session, the server can stop
+  answering (clients fail with `time-out ... while waiting for the simulator`). Restart it with
+  `brc cdk app deploy -f carla-server.yaml`; the client and the viewer reconnect on their own.
 - The rf-sim UE can drop and re-attach. Periodic SRS on the gNB
   (`extras.t9s.io/do-srs: periodic`, already set in `carla-net.yaml`) keeps it stable. The
   client skips frames while `oaitun_ue1` is down.
