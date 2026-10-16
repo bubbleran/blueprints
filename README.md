@@ -18,8 +18,10 @@ network/
 │   ├───benetel-liteon/
 │   ├───liteon/
 │   ├───rf-sim/
-│   └───usrp/
+│   ├───usrp/
+│   └───zmq/
 ├───srsRAN/
+├───Terminals/
 └───utils/
 ```
 
@@ -27,6 +29,7 @@ network/
 -   `network/`: The main directory containing all network blueprints.
 -   `network/<VENDOR>/`: Contains blueprints for a specific vendor, such as Amarisoft, OAI, or srsRAN.
 -   `network/OAI/<HARDWARE>/`: Contains blueprints for OpenAirInterface (OAI) tailored for specific hardware.
+-   `network/Terminals/`: Terminal (UE) templates to add to a network that does not ship its own.
 -   `utils/`: Contains utility scripts.
 
 ## How to Use
@@ -36,6 +39,18 @@ To deploy a network, use the `brc` command-line tool with the desired blueprint.
 ```bash
 brc install network network/Amarisoft/01-amr-basic.yaml
 ```
+
+Some blueprints also include their Terminal, and `brc install network` installs both. Their `readiness-check` makes the
+Terminal ready only once every UE pings the UPF gateway of its slice from its own tunnel. Once it is ready, test the
+connectivity of a UE with:
+
+```bash
+brc test rtt ue1 gateway -- -c 5
+brc test throughput ue1 dl gateway -- --time 10
+```
+
+For a Terminal that runs several UEs (`ue-count`), name the UE after the Terminal, for example `brc test rtt ue1 ue3 gateway`
+for its third UE. `kubectl get terminal ue1 -o yaml` lists every UE in `status.ues`.
 
 For more detailed instructions and information on the available commands, please refer to the [official BubbleRAN documentation](https://bubbleran.com/docs).
 
@@ -51,8 +66,9 @@ This repository includes blueprints for the following vendors and platforms:
     -   Benetel
     -   Benetel-Liteon
     -   Liteon
-    -   RF-Sim
+    -   RF-Sim: monolithic gNB, CU-DU, multi-UE, two PDU sessions, NTN (GEO and LEO), O-RAN with FlexRIC and xApps
     -   USRP
+    -   ZMQ: SISO and MIMO 2x2
 -   **srsRAN**
 
 ## Available Edge Applications

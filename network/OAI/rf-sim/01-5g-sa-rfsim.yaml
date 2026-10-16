@@ -58,7 +58,7 @@ spec:
 # spec:
 #     vendor: oai
 #     stack: 5g-sa
-#     model: terminal/nr-rfsim
+#     model: terminal/oai-ue
 #     preferred-access: oai-gnb.bubbleran
 #     target-cores:
 #         - core.bubbleran
@@ -74,9 +74,11 @@ spec:
 #         service-type: 1
 #         differentiator: 0x000000
 #     radio:
+#         device: rf-sim
+#         formation: "1x1"
 #         bands:
 #             - n78
 #     readiness-check:
 #         method: ping
-#         target: google-ip
-#         interface-name: oaitun_ue0
+#         target: gateway
+#         interface-name: oaitun_ue1

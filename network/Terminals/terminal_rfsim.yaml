@@ -6,7 +6,8 @@ metadata:
 spec:
     vendor: oai # only available option
     stack: 5g-sa
-    model: terminal/nr-rfsim 
+    model: terminal/oai-ue
+    # ue-count: 3 # Number of UEs run by this terminal, UE i uses the IMSI + i
     preferred-access: [<access-name>.<network-name>] # Access name and network name preferred by the terminal
     target-cores:
         - [<core-name>.<network-name>] # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
@@ -22,10 +23,11 @@ spec:
         service-type: 1
         differentiator: 0x000000
     radio:
+        device: rf-sim
+        formation: "1x1"
         bands:
             - n78 # Radio band configured in the network
-    readiness-check:
+    readiness-check: # Ready once every UE pings the target from its tunnel (oaitun_ue1 for the first UE)
         method: ping
-        target: google-ip
-        interface-name: oaitun_ue0
-        
+        target: gateway # UPF of the slice, or google-ip, google-dns, kubernetes
+        interface-name: oaitun_ue1 # tunnel of the first UE, also used by brc test
