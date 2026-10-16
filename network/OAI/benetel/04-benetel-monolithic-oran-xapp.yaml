@@ -61,7 +61,6 @@ spec:
                 - pdcp-sm
                 - mac-sm
                 - gtp-sm
-                - slice-sm
                 - kpm-sm
                 - database
             annotations:
