@@ -81,4 +81,3 @@ spec:
 #     readiness-check:
 #         method: ping
 #         target: gateway
-#         interface-name: oaitun_ue1
