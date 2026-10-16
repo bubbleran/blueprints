@@ -1,0 +1,83 @@
+# OAI CU and DU (F1 split in one access) and an OAI soft UE over the RF simulator.
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: bubbleran
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: 1
+            differentiator: 0x000000
+            ipv4-range: 12.1.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        -   name: oai-cu-du
+            stack: 5g-sa
+            model: oai-ran/cu-du
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: rf-sim
+            cells:
+                -   band: n78
+                    arfcn: 621312
+                    bandwidth: 40MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5000
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            core-networks:
+                - core.bubbleran
+    core:
+        -   name: core
+            stack: 5g-sa
+            model: oai-cn/minimal
+            identity:
+                region: 0
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+---
+apiVersion: athena.trirematics.io/v1
+kind: Terminal
+metadata:
+    name: ue1
+    namespace: trirematics
+spec:
+    vendor: oai
+    stack: 5g-sa
+    model: terminal/oai-ue
+    preferred-access: oai-cu-du.bubbleran
+    target-cores:
+        - core.bubbleran
+    identity:
+        imsi: "001010000000001"
+        pin: "1234"
+        opc: "0xc42449363bbad02b66d16bc975d77cc1"
+        key: "0xfec86ba6eb707ed08905757b1bb44b8f"
+        sqn: "0xff9bb4000001"
+    slice:
+        dnn: internet
+        network-mode: IPv4
+        service-type: 1
+        differentiator: 0x000000
+    radio:
+        device: rf-sim
+        formation: "1x1"
+        bands:
+            - n78
+    # ready once every UE pings the UPF gateway of its slice from its own tunnel
+    readiness-check:
+        method: ping
+        target: gateway
+        interface-name: oaitun_ue1 # tunnel of the first UE, also used by brc test
