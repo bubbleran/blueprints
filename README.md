@@ -49,8 +49,10 @@ brc test rtt ue1 gateway -- -c 5
 brc test throughput ue1 dl gateway -- --time 10
 ```
 
-For a Terminal that runs several UEs (`ue-count`), name the UE after the Terminal, for example `brc test rtt ue1 ue3 gateway`
-for its third UE. `kubectl get terminal ue1 -o yaml` lists every UE in `status.ues`.
+Here `ue1` is the name of the Terminal. For a Terminal that runs several UEs (`ue-count`), name the UE after the Terminal,
+for example `brc test rtt ues ue3 gateway` for the third UE of the Terminal `ues` in
+[OAI/rf-sim/07-5g-sa-rfsim-multi-ue.yaml](network/OAI/rf-sim/07-5g-sa-rfsim-multi-ue.yaml). Without it, the first UE is
+tested. `kubectl get terminal ues -o yaml` lists every UE in `status.ues`.
 
 For more detailed instructions and information on the available commands, please refer to the [official BubbleRAN documentation](https://bubbleran.com/docs).
 
