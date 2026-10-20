@@ -11,7 +11,7 @@ Every blueprint uses the same section names, so a Terminal only needs the networ
 | Access, monolithic gNB | `gnb` (`gnb-1`, `gnb-2` when there are several) |
 | Access, CU/DU split | `cu-du` (and `du` for an extra DU) |
 | Core | `core` |
-| Network | `<ran>-<radio>`, for example `oai-usrp`, `ocudu-benetel`, `srsran-usrp` |
+| Network | `<ran>-<radio>`, for example `oai-usrp`, `ocudu-benetel`, `ocudu-zmq`; `amarisoft` and `liteon-aio` for the blueprints with their own radio |
 
 The Terminal points to them with `preferred-access: <access>.<network>` and `target-cores: [core.<network>]`.
 

@@ -4,14 +4,14 @@ This repository contains a collection of telco blueprints for deploying various 
 
 ## Repository Structure
 
-Network blueprints are organized as `network/<ran>/<radio>/NN-<topology>[-<feature>].yaml`:
+Network blueprints are organized as `network/<ran>/<radio>/NN-<topology>[-<feature>].yaml`. srsRAN is deprecated and no longer included.
 
 ```
 apps/                   edge applications
 ├── carla/
 └── yolo-edge/
 network/
-├── amarisoft/sdr/
+├── amarisoft/
 ├── liteon-aio/
 ├── oai/
 │   ├── benetel/
@@ -20,18 +20,17 @@ network/
 │   ├── rfsim/
 │   ├── usrp/           B200/B210 and N300
 │   └── zmq/
-├── ocudu/
-│   ├── benetel/
-│   ├── liteon/
-│   ├── usrp/           B200/B210 and N300
-│   └── zmq/
-└── srsran/usrp/
+└── ocudu/
+    ├── benetel/
+    ├── liteon/
+    ├── usrp/           B200/B210 and N300
+    └── zmq/
 terminals/              Quectel Terminal and the Terminal model table
 utils/                  helper scripts
 ```
 
 -   `apps/`: Edge applications, each with its source, Dockerfile and the specs to build it into your cluster-local registry with the BubbleRAN CDK.
--   `network/<ran>/<radio>/`: Network blueprints for a RAN (`oai`, `ocudu`, `srsran`, `amarisoft`, `liteon-aio`) on a radio (`rfsim`, `zmq`, `usrp`, `sdr`, or the O-RAN 7.2 RU vendor `benetel`, `liteon`). The topology words are fixed: `monolithic`, `cu-du`, `-oran` (FlexRIC), `-xapp` (FlexRIC and the monitoring xApp), `-ntn-geo`/`-ntn-leo`, `-2x2`.
+-   `network/<ran>/<radio>/`: Network blueprints for a RAN (`oai`, `ocudu`) on a radio (`rfsim`, `zmq`, `usrp`, or the O-RAN 7.2 RU vendor `benetel`, `liteon`). Amarisoft and the LiteON AIO bring their own radio, so their blueprints sit directly in `network/amarisoft/` and `network/liteon-aio/`. The topology words are fixed: `monolithic`, `cu-du`, `-oran` (FlexRIC), `-xapp` (FlexRIC and the monitoring xApp), `-ntn-geo`/`-ntn-leo`, `-2x2`.
 -   `terminals/`: Blueprints with a soft UE (RF simulator, ZMQ, NTN, OAI UE on a USRP) include their Terminal. The over-the-air blueprints end with the `preferred-access` and `target-cores` to set in [terminals/quectel.yaml](terminals/quectel.yaml). See [terminals/README.md](terminals/README.md) for the naming rule and the Terminal model of each RAN and radio.
 -   `utils/`: Helper scripts.
 
@@ -78,7 +77,6 @@ This repository includes blueprints for the following vendors and platforms:
     -   Benetel and Liteon (O-RAN 7.2): monolithic gNB, CU-DU, O-RAN with FlexRIC and xApps
     -   USRP: B200/B210 (monolithic gNB and CU-DU) and N300
     -   ZMQ with the OAI soft UE: SISO, MIMO 2x2, CU-DU and NTN (GEO)
--   **srsRAN**
 
 ## Available Edge Applications
 
@@ -92,9 +90,9 @@ the section names described in [terminals/README.md](terminals/README.md). Old p
 
 | Old path | New path |
 |---|---|
-| `network/Amarisoft/01-amr-basic.yaml` | `network/amarisoft/sdr/01-monolithic.yaml` |
-| `network/Amarisoft/02-amr-ho-intra.yaml` | `network/amarisoft/sdr/02-handover-intra.yaml` |
-| `network/Amarisoft/03-amr-ho-inter.yaml` | `network/amarisoft/sdr/03-handover-inter.yaml` |
+| `network/Amarisoft/01-amr-basic.yaml` | `network/amarisoft/01-monolithic.yaml` |
+| `network/Amarisoft/02-amr-ho-intra.yaml` | `network/amarisoft/02-handover-intra.yaml` |
+| `network/Amarisoft/03-amr-ho-inter.yaml` | `network/amarisoft/03-handover-inter.yaml` |
 | `network/LITEON_AIO/01-liteon-aio.yaml` | `network/liteon-aio/01-aio.yaml` |
 | `network/OAI/benetel-liteon/01-liteon-benetel-cu-du-oran.yaml` | `network/oai/benetel-liteon/01-cu-du-oran-handover.yaml` |
 | `network/OAI/benetel/01-benetel-monolithic.yaml` | `network/oai/benetel/01-monolithic.yaml` |
@@ -144,7 +142,7 @@ the section names described in [terminals/README.md](terminals/README.md). Old p
 | `network/OCUDU/zmq/04-ocudu-zmq-ntn-geo.yaml` | `network/ocudu/zmq/04-ntn-geo.yaml` |
 | `network/Terminals/README.md` | `terminals/README.md` |
 | `network/Terminals/terminal_quectel.yaml` | `terminals/quectel.yaml` |
-| `network/srsRAN/01-5g-sa-srs-usrp.yaml` | `network/srsran/usrp/01-monolithic.yaml` |
-| `network/srsRAN/02-5g-sa-srs-usrp-oran.yaml` | `network/srsran/usrp/02-monolithic-oran.yaml` |
-| `network/srsRAN/03-5g-sa-srs-usrp-oran-xapp.yaml` | `network/srsran/usrp/03-monolithic-oran-xapp.yaml` |
+| `network/srsRAN/01-5g-sa-srs-usrp.yaml` | removed, srsRAN is deprecated |
+| `network/srsRAN/02-5g-sa-srs-usrp-oran.yaml` | removed, srsRAN is deprecated |
+| `network/srsRAN/03-5g-sa-srs-usrp-oran-xapp.yaml` | removed, srsRAN is deprecated |
 | `network/utils/get_arfcn.py` | `utils/get_arfcn.py` |
