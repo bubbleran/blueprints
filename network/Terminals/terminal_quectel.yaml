@@ -1,20 +1,24 @@
+# Quectel modem (COTS UE) for the over-the-air blueprints: USRP, Benetel, Liteon, LiteON AIO and Amarisoft.
+# Applies as is to OAI/usrp/01-5g-sa-usrp.yaml (network oai-usrp). For another blueprint, replace
+# oai-usrp by its network name (metadata.name), and gnb by cu-du for a CU/DU blueprint.
+# Set the identity to the SIM card in the modem.
 apiVersion: athena.trirematics.io/v1
 kind: Terminal
 metadata:
-    name: ue02
+    name: quectel
     namespace: trirematics
 spec:
-    vendor: oai # or amarisoft for Amarisoft networks
+    vendor: oai # amr for the Amarisoft blueprints
     stack: 5g-sa
     model: terminal/quectel
-    preferred-access: [<access-name>.<network-name>] # Access name and network name preferred by the terminal
+    preferred-access: gnb.oai-usrp # <access>.<network>
     target-cores:
-        - [<core-name>.<network-name>] # Core name and network name to which the terminal is going to be registered (e.g. core.bubbleran for OAI/rf-sim/01-5g-sa-rfsim.yaml)
+        - core.oai-usrp # core.<network>
     identity:
-        imsi: "001010000000002" # SIM card IMSI
+        imsi: "001010000000001" # SIM card IMSI
         pin: "1234" # SIM card PIN
-        opc: "0xC42449363BBAD02B66D16BC975D77CC1" # SIM card OPC
-        key: "0xfec86ba6eb707ed08905757b1bb44b8f" # SIM card Key
+        opc: "0xc42449363bbad02b66d16bc975d77cc1" # SIM card OPC
+        key: "0xfec86ba6eb707ed08905757b1bb44b8f" # SIM card key
         sqn: "0xff9bb4000001" # SIM card SQN
     slice:
         dnn: internet
@@ -23,8 +27,7 @@ spec:
         differentiator: 0x000000
     radio:
         bands:
-            - n78  # Radio band configured in the network
-            # -n77 # List multiple bands if inter-frequency handover is configured
+            - n78 # band of the network cell; list several bands for inter-frequency handover
     readiness-check:
         method: ping
         target: google-ip

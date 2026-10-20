@@ -1,7 +1,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: srs
+    name: srsran-usrp
     namespace: trirematics
 spec:
     slices:
@@ -13,7 +13,7 @@ spec:
             ipv4-range: "12.1.1.0/24"
             ipv6-range: "2001:db8:1::/64"
     access:
-        -   name: oai-gnb
+        -   name: gnb
             stack: 5g-sa
             model: srs/monolithic-gnb
             identity:
@@ -31,11 +31,11 @@ spec:
                         dl-symbols: 6
                         ul-slots: 2
                         ul-symbols: 4
-            controller: flexric.srs
+            controller: flexric.srsran-usrp
             core-networks:
-                - minimal.srs
+                - core.srsran-usrp
     core:
-        -   name: minimal
+        -   name: core
             stack: 5g-sa
             model: oai-cn/minimal
             identity:
@@ -51,4 +51,4 @@ spec:
             stack: 5g-sa
             model: mosaic5g/flexric
 
-#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access gnb.srsran-usrp, target-cores core.srsran-usrp ---#

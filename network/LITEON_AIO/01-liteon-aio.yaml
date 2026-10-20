@@ -1,7 +1,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: bubbleran
+    name: liteon-aio
     namespace: trirematics
 spec:
     # LiteON AIO only supports one slice configuration
@@ -20,7 +20,7 @@ spec:
         # To access the AIO via SSH, run the following command:
         # ssh user@{IP-address}
         # The default password is: Usr5566#
-        -   name: liteon
+        -   name: gnb
             stack: 5g-sa
             model: bubbleran/liteon-aio
             scheduling:
@@ -61,7 +61,7 @@ spec:
                         ul-slots: 2
                         ul-symbols: 6
     core:
-        -   name: open5gs
+        -   name: core
             stack: 5g-sa
             model: open5gs/5gc
             profiles:
@@ -74,3 +74,5 @@ spec:
         ipv4:
             default: 8.8.8.8
             secondary: 8.8.4.4
+
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access gnb.liteon-aio, target-cores core.liteon-aio ---#

@@ -1,7 +1,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: liteon
+    name: ocudu-liteon
     namespace: trirematics
 spec:
     slices:
@@ -13,7 +13,7 @@ spec:
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: ocudu-gnb
+        -   name: cu-du
             stack: 5g-sa
             model: ocudu/cu-du-ru
             identity:
@@ -37,9 +37,9 @@ spec:
                         ul-slots: 1
                         ul-symbols: 4
             core-networks:
-                - open5gs.liteon
+                - core.ocudu-liteon
     core:
-        -   name: open5gs
+        -   name: core
             stack: 5g-sa
             model: open5gs/5gc
             profiles:
@@ -53,4 +53,4 @@ spec:
             default: 8.8.8.8
             secondary: 4.4.4.4
 
-#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access cu-du.ocudu-liteon, target-cores core.ocudu-liteon ---#

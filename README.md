@@ -34,7 +34,7 @@ network/
 -   `network/`: The main directory containing all network blueprints.
 -   `network/<VENDOR>/`: Contains blueprints for a specific vendor, such as Amarisoft, OAI, or srsRAN.
 -   `network/OAI/<HARDWARE>/` and `network/OCUDU/<HARDWARE>/`: Contain blueprints for OpenAirInterface (OAI) and OCUDU tailored for specific hardware.
--   `network/Terminals/`: Terminal (UE) templates to add to a network that does not ship its own.
+-   `network/Terminals/`: the Quectel (COTS UE) Terminal for the over-the-air blueprints, and the table of Terminal models per RAN and radio. Blueprints with a soft UE (RF simulator, ZMQ, NTN) include their Terminal; the others end with the `preferred-access` and `target-cores` to set. See [network/Terminals/README.md](network/Terminals/README.md).
 -   `utils/`: Contains utility scripts.
 
 ## How to Use

@@ -2,7 +2,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: bubbleran
+    name: oai-rfsim
     namespace: trirematics
 spec:
     slices:
@@ -14,7 +14,7 @@ spec:
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: oai-gnb
+        -   name: gnb
             stack: 5g-sa
             model: oai-ran/monolithic-gnb-ntn
             identity:
@@ -31,7 +31,7 @@ spec:
                     bandwidth: 5MHz
                     subcarrier-spacing: 15kHz
             core-networks:
-                - core.bubbleran
+                - core.oai-rfsim
     core:
         -   name: core
             stack: 5g-sa
@@ -58,9 +58,9 @@ spec:
     vendor: oai
     stack: 5g-sa
     model: terminal/oai-ue-ntn
-    preferred-access: oai-gnb.bubbleran
+    preferred-access: gnb.oai-rfsim
     target-cores:
-        - core.bubbleran
+        - core.oai-rfsim
     identity:
         imsi: "001010000000001"
         pin: "1234"

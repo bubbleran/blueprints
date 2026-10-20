@@ -1,7 +1,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: liteon
+    name: oai-liteon
     namespace: trirematics
 spec:
     slices:
@@ -13,7 +13,7 @@ spec:
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: oai-gnb-1
+        -   name: gnb-1
             stack: 5g-sa
             model: oai-ran/monolithic-gnb-ru #cu-du-ru
             identity:
@@ -36,10 +36,10 @@ spec:
                         dl-symbols: 6
                         ul-slots: 1
                         ul-symbols: 4
-                          #controller: flexric.liteon
+                          #controller: flexric.oai-liteon
             core-networks:
-                - open5gs.liteon
-        -   name: oai-gnb-2
+                - core.oai-liteon
+        -   name: gnb-2
             stack: 5g-sa
             model: oai-ran/monolithic-gnb-ru #cu-du-ru
             identity:
@@ -62,11 +62,11 @@ spec:
                         dl-symbols: 6
                         ul-slots: 1
                         ul-symbols: 4
-                          #controller: flexric.liteon
+                          #controller: flexric.oai-liteon
             core-networks:
-                - open5gs.liteon
+                - core.oai-liteon
     core:
-        -   name: open5gs
+        -   name: core
             stack: 5g-sa
             model: open5gs/5gc
             profiles:
@@ -80,6 +80,4 @@ spec:
             default: 8.8.8.8
             secondary: 8.8.4.4
 
-#--- Use terminal_external.yaml and/or terminal_quectel.yaml to configure UEs for this network ---#
-
-
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access gnb-1.oai-liteon, target-cores core.oai-liteon ---#

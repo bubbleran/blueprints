@@ -3,7 +3,7 @@
 # +---------------------------------+               #
 # |  +------+   +------+   +------+ |               #
 # |  |  CU  |---|  DU  |---|  RU  | |               #
-# |  +------+   +------+   |Liteon| | cu-du-liteon  #
+# |  +------+   +------+   |Liteon| | cu-du         #
 # |     |                  +------+ |               #
 # +-----|---------------------------+               #
 #       |                                           #
@@ -13,7 +13,7 @@
 # +-----|---------------------------+               #
 # |  +------+   +-------+           |               #
 # |  |  DU  |---|  RU   |           |               #
-# |  +------+   |Benetel|           |  du-benetel   #
+# |  +------+   |Benetel|           |  du           #
 # |             +-------+           |               #
 # +---------------------------------+               #
 #                                                   #
@@ -22,7 +22,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: handover
+    name: oai-benetel-liteon
     namespace: trirematics
 spec:
     slices:
@@ -34,7 +34,7 @@ spec:
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: cu-du-liteon
+        -   name: cu-du
             stack: 5g-sa
             model: oai-ran/cu-du-ru
             identity:
@@ -60,10 +60,10 @@ spec:
                     groups:
                         -   kind: hog
                             name: handover-group
-            controller: flexric.handover
+            controller: flexric.oai-benetel-liteon
             core-networks:
-                - open5gs.handover
-        -   name: du-benetel
+                - core.oai-benetel-liteon
+        -   name: du
             stack: 5g-sa
             model: oai-ran/du-ru
             identity:
@@ -75,7 +75,7 @@ spec:
                     formation: 4x4
             annotations:
                 extras.t9s.io/ru-vendor: 'liteon'
-                extras.t9s.io/cu-name: "cu-du-liteon"
+                extras.t9s.io/cu-name: "cu-du"
             cells:
                 -   band: n77
                     arfcn: 673344 # 663360 # 650112  #673344
@@ -90,15 +90,15 @@ spec:
                     groups:
                         -   kind: hog
                             name: handover-group
-            controller: flexric.handover
+            controller: flexric.oai-benetel-liteon
             core-networks:
-                - open5gs.handover
+                - core.oai-benetel-liteon
     edge:
         -   name: flexric
             stack: 5g-sa
             model: mosaic5g/flexric
     core:
-        -   name: open5gs
+        -   name: core
             stack: 5g-sa
             model: open5gs/5gc
             scheduling:
@@ -113,3 +113,5 @@ spec:
         ipv4:
             default: 8.8.8.8
             secondary: 8.8.4.4
+
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access cu-du.oai-benetel-liteon, target-cores core.oai-benetel-liteon ---#

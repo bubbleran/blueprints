@@ -3,7 +3,7 @@
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:
-    name: ocudu
+    name: ocudu-zmq
     namespace: trirematics
 spec:
     slices:
@@ -15,7 +15,7 @@ spec:
             ipv4-range: 12.1.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: ocudu-gnb
+        -   name: gnb
             stack: 5g-sa
             model: ocudu/monolithic-gnb
             identity:
@@ -40,7 +40,7 @@ spec:
                         ul-slots: 2
                         ul-symbols: 4
             core-networks:
-                - core.ocudu
+                - core.ocudu-zmq
     core:
         -   name: core
             stack: 5g-sa
@@ -63,9 +63,9 @@ spec:
     vendor: oai
     stack: 5g-sa
     model: terminal/oai-ue-ocudu
-    preferred-access: ocudu-gnb.ocudu
+    preferred-access: gnb.ocudu-zmq
     target-cores:
-        - core.ocudu
+        - core.ocudu-zmq
     identity:
         imsi: "001010000000001"
         pin: "1234"

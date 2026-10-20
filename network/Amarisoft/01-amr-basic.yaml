@@ -13,7 +13,7 @@ spec:
             ipv4-range: 12.2.1.0/24
             ipv6-range: 2001:db8:1::/64
     access:
-        -   name: amr-ran
+        -   name: gnb
             stack: 5g-sa
             model: amarisoft/basic-ran
             identity:
@@ -33,12 +33,12 @@ spec:
                         ul-slots: 2
                         ul-symbols: 4
             core-networks:
-                - amr-cn.amarisoft
+                - core.amarisoft
             scheduling:
                nodeSelector:
                    kubernetes.io/hostname: moto
     core:
-        -   name: amr-cn
+        -   name: core
             stack: 5g-sa
             model: amarisoft/basic-cn
             profiles:
@@ -52,5 +52,4 @@ spec:
             default: 172.21.3.100
             secondary: 8.8.8.8
 
-#--- Use Terminals/terminal_external.yaml and/or Terminals/terminal_quectel.yaml to configure UEs for this network ---#
-
+#--- Add a UE with Terminals/terminal_quectel.yaml: preferred-access gnb.amarisoft, target-cores core.amarisoft ---#
