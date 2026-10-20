@@ -20,6 +20,11 @@ network/
 │   ├───rf-sim/
 │   ├───usrp/
 │   └───zmq/
+├───OCUDU/
+│   ├───benetel/
+│   ├───liteon/
+│   ├───usrp/
+│   └───zmq/
 ├───srsRAN/
 ├───Terminals/
 └───utils/
@@ -28,7 +33,7 @@ network/
 -   `apps/`: Edge applications, each with its source, Dockerfile and the specs to build it into your cluster-local registry with the BubbleRAN CDK.
 -   `network/`: The main directory containing all network blueprints.
 -   `network/<VENDOR>/`: Contains blueprints for a specific vendor, such as Amarisoft, OAI, or srsRAN.
--   `network/OAI/<HARDWARE>/`: Contains blueprints for OpenAirInterface (OAI) tailored for specific hardware.
+-   `network/OAI/<HARDWARE>/` and `network/OCUDU/<HARDWARE>/`: Contain blueprints for OpenAirInterface (OAI) and OCUDU tailored for specific hardware.
 -   `network/Terminals/`: Terminal (UE) templates to add to a network that does not ship its own.
 -   `utils/`: Contains utility scripts.
 
@@ -69,8 +74,12 @@ This repository includes blueprints for the following vendors and platforms:
     -   Benetel-Liteon
     -   Liteon
     -   RF-Sim: monolithic gNB, CU-DU, multi-UE, two PDU sessions, NTN (GEO and LEO), O-RAN with FlexRIC and xApps
-    -   USRP
+    -   USRP: B200/B210 and N300
     -   ZMQ: SISO and MIMO 2x2
+-   **OCUDU**
+    -   Benetel and Liteon (O-RAN 7.2): monolithic gNB, CU-DU, O-RAN with FlexRIC and xApps
+    -   USRP: B200/B210 (monolithic gNB and CU-DU) and N300
+    -   ZMQ with the OAI soft UE: SISO, MIMO 2x2, CU-DU and NTN (GEO)
 -   **srsRAN**
 
 ## Available Edge Applications
