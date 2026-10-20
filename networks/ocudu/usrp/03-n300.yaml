@@ -1,0 +1,52 @@
+# OCUDU monolithic gNB over the air on a USRP N300, band n78, 20 MHz.
+# The ocudu model drives the N300 at 30.72 Msps, which allows up to 20 MHz at 30 kHz.
+apiVersion: athena.trirematics.io/v1
+kind: Network
+metadata:
+    name: ocudu-usrp
+    namespace: trirematics
+spec:
+    slices:
+        -   plmn: "00101"
+            dnn: internet
+            network-mode: IPv4
+            service-type: 1
+            differentiator: 0x000000
+            ipv4-range: 12.1.1.0/24
+            ipv6-range: 2001:db8:1::/64
+    access:
+        -   name: gnb
+            stack: 5g-sa
+            model: ocudu/monolithic-gnb
+            identity:
+                an-id: 30
+                tracking-area: 1
+            radio:
+                device: uhd-n300
+            cells:
+                -   band: n78
+                    arfcn: 641280
+                    bandwidth: 20MHz
+                    subcarrier-spacing: 30kHz
+                    tdd-config:
+                        period: 5000
+                        dl-slots: 7
+                        dl-symbols: 6
+                        ul-slots: 2
+                        ul-symbols: 4
+            core-networks:
+                - core.ocudu-usrp
+    core:
+        -   name: core
+            stack: 5g-sa
+            model: oai-cn/minimal
+            identity:
+                region: 0
+                cn-group: 4
+                cn-id: 5
+    dns:
+        ipv4:
+            default: 8.8.8.8
+            secondary: 8.8.4.4
+
+#--- Add a UE with terminals/quectel.yaml or terminals/external.yaml: preferred-access gnb.ocudu-usrp, target-cores core.ocudu-usrp ---#

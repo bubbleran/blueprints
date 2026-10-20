@@ -1,5 +1,5 @@
 # Quectel modem (COTS UE) for the over-the-air blueprints: USRP, Benetel, Liteon, LiteON AIO and Amarisoft.
-# Applies as is to network/oai/usrp/01-b200.yaml (network oai-usrp). For another blueprint, replace
+# Applies as is to networks/oai/usrp/01-b200.yaml (network oai-usrp). For another blueprint, replace
 # oai-usrp by its network name (metadata.name), and gnb by cu-du for a CU/DU blueprint.
 # Set the identity to the SIM card in the modem.
 apiVersion: athena.trirematics.io/v1
