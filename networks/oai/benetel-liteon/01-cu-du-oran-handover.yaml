@@ -74,11 +74,11 @@ spec:
                 antenna:
                     formation: 4x4
             annotations:
-                extras.t9s.io/ru-vendor: 'liteon'
+                extras.t9s.io/ru-vendor: 'benetel'
                 extras.t9s.io/cu-name: "cu-du"
             cells:
                 -   band: n77
-                    arfcn: 673344 # 663360 # 650112  #673344
+                    arfcn: 673344
                     bandwidth: 100MHz
                     subcarrier-spacing: 30kHz
                     tdd-config:
@@ -102,7 +102,7 @@ spec:
             stack: 5g-sa
             model: open5gs/5gc
             scheduling:
-                nodeName: bubble1
+                nodeName: bubble1 # Change with an actual node name of your cluster
             profiles:
                 - debug
             identity:
