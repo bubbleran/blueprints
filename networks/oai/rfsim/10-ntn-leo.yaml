@@ -1,4 +1,5 @@
 # OAI NTN gNB and an OAI NTN soft UE over the RF simulator: LEO satellite, band n254.
+# Experimental: NTN support is intended for evaluation in an emulated environment.
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:

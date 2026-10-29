@@ -23,7 +23,7 @@ spec:
                 device: amr-sdr50
             cells:
                 -   band: n78
-                    arfcn: 641760 #632750 #640008 #641280 #632628
+                    arfcn: 641760
                     bandwidth: 40MHz
                     subcarrier-spacing: 30kHz
                     tdd-config:
@@ -35,8 +35,8 @@ spec:
             core-networks:
                 - core.amarisoft
             scheduling:
-               nodeSelector:
-                   kubernetes.io/hostname: moto
+                nodeSelector:
+                    kubernetes.io/hostname: bubble2 # Change with a node name of your cluster (node needs to have an Amarisoft SDR connected)
     core:
         -   name: core
             stack: 5g-sa
@@ -49,7 +49,7 @@ spec:
                 cn-id: 5
     dns:
         ipv4:
-            default: 172.21.3.100
-            secondary: 8.8.8.8
+            default: 8.8.8.8
+            secondary: 8.8.4.4
 
 #--- Add a UE with terminals/quectel.yaml or terminals/external.yaml: preferred-access gnb.amarisoft, target-cores core.amarisoft ---#

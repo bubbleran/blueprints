@@ -30,7 +30,7 @@ utils/                  helper scripts
 ```
 
 -   `apps/`: Edge applications, each with its source, Dockerfile and the specs to build it into your cluster-local registry with the BubbleRAN CDK.
--   `networks/<ran>/<radio>/`: Network blueprints for a RAN (`oai`, `ocudu`) on a radio (`rfsim`, `zmq`, `usrp`, or the O-RAN 7.2 RU vendor `benetel`, `liteon`). Amarisoft and the LiteON AIO bring their own radio, so their blueprints sit directly in `networks/amarisoft/` and `networks/liteon-aio/`. The topology words are fixed: `monolithic`, `cu-du`, `-oran` (FlexRIC), `-xapp` (FlexRIC and the monitoring xApp), `-ntn-geo`/`-ntn-leo`, `-2x2`.
+-   `networks/<ran>/<radio>/`: Network blueprints for a RAN (`oai`, `ocudu`) on a radio (`rfsim`, `zmq`, `usrp`, or the O-RAN 7.2 RU vendor `benetel`, `liteon`). Amarisoft and the LiteON AIO bring their own radio, so their blueprints sit directly in `networks/amarisoft/` and `networks/liteon-aio/`. The topology words are fixed: `monolithic`, `cu-du`, `-oran` (FlexRIC), `-xapp` (FlexRIC and the monitoring xApp), `-ntn-geo`/`-ntn-leo` (NTN is experimental and intended for evaluation in an emulated environment), `-2x2`.
 -   `terminals/`: Blueprints with a soft UE (RF simulator, ZMQ, NTN, OAI UE on a USRP) include their Terminal. The over-the-air blueprints end with the `preferred-access` and `target-cores` to set in [terminals/quectel.yaml](terminals/quectel.yaml) (Quectel modem on a cluster node) or [terminals/external.yaml](terminals/external.yaml) (any other UE, only registers its SIM). See [terminals/README.md](terminals/README.md) for the naming rule and the Terminal model of each RAN and radio.
 -   `utils/`: Helper scripts.
 
@@ -70,13 +70,13 @@ This repository includes blueprints for the following vendors and platforms:
     -   Benetel
     -   Benetel-Liteon
     -   Liteon
-    -   RF-Sim: monolithic gNB, CU-DU, multi-UE, two PDU sessions, NTN (GEO and LEO), O-RAN with FlexRIC and xApps
+    -   RF-Sim: monolithic gNB, CU-DU, multi-UE, two PDU sessions, NTN (GEO and LEO, experimental), O-RAN with FlexRIC and xApps
     -   USRP: B200/B210 and N300
     -   ZMQ: SISO and MIMO 2x2
 -   **OCUDU**
     -   Benetel and Liteon (O-RAN 7.2): monolithic gNB, CU-DU, O-RAN with FlexRIC and xApps
     -   USRP: B200/B210 (monolithic gNB and CU-DU) and N300
-    -   ZMQ with the OAI soft UE: SISO, MIMO 2x2, CU-DU and NTN (GEO)
+    -   ZMQ with the OAI soft UE: SISO, MIMO 2x2, CU-DU and NTN (GEO, experimental)
 
 ## Available Edge Applications
 
@@ -107,7 +107,7 @@ the section names described in [terminals/README.md](terminals/README.md). Old p
 | `network/OAI/rf-sim/01-5g-sa-rfsim.yaml` | `networks/oai/rfsim/01-monolithic.yaml` |
 | `network/OAI/rf-sim/02-5g-sa-rfsim-oran.yaml` | `networks/oai/rfsim/02-monolithic-oran.yaml` |
 | `network/OAI/rf-sim/03-5g-sa-rfsim-oran-xapp.yaml` | `networks/oai/rfsim/03-monolithic-oran-xapp.yaml` |
-| `network/OAI/rf-sim/04-5g-sa-rfsim-oran-xapp-mysql.yaml` | `networks/oai/rfsim/04-monolithic-oran-xapp-mysql.yaml` |
+| `network/OAI/rf-sim/04-5g-sa-rfsim-oran-xapp-mysql.yaml` | removed, the Falcon release has no MySQL monitoring xApp; use `networks/oai/rfsim/03-monolithic-oran-xapp.yaml` |
 | `network/OAI/rf-sim/05-5g-sa-rfsim-open5gs.yaml` | `networks/oai/rfsim/05-monolithic-open5gs.yaml` |
 | `network/OAI/rf-sim/06-5g-sa-rfsim-cu-du.yaml` | `networks/oai/rfsim/06-cu-du.yaml` |
 | `network/OAI/rf-sim/07-5g-sa-rfsim-multi-ue.yaml` | `networks/oai/rfsim/07-multi-ue.yaml` |

@@ -1,5 +1,6 @@
 # OCUDU NTN gNB and an OAI NTN soft UE linked over ZMQ, GEO satellite delay, band n256, 5 MHz.
 # No radio hardware is needed. The terminal manager computes the UE SSB position from the cell.
+# Experimental: NTN support is intended for evaluation in an emulated environment.
 apiVersion: athena.trirematics.io/v1
 kind: Network
 metadata:

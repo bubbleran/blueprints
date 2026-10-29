@@ -15,7 +15,7 @@ spec:
     access:
         -   name: gnb-1
             stack: 5g-sa
-            model: amarisoft/ran-e2
+            model: amarisoft/basic-ran
             identity:
                 an-id: 30
                 tracking-area: 1
@@ -59,7 +59,7 @@ spec:
                     kubernetes.io/hostname: bubble2 # Change with a node name of your cluster (node needs to have 2 Amarisoft SDR connected)
         -   name: gnb-2
             stack: 5g-sa
-            model: amarisoft/ran-e2
+            model: amarisoft/basic-ran
             identity:
                 an-id: 40
                 tracking-area: 1
